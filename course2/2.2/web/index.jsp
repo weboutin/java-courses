@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.sql.Connection" %>
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.ResultSet" %>
@@ -6,50 +7,46 @@
 <html>
 
 <body>
-    <h2>
-        <% 
-    String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    String DB_URL = "jdbc:mysql://localhost:3306/blog?useSSL=false";
-
-    out.println("Index"); 
-    String USER = "root";
-    String PASS = "root";
-    Connection conn = null;
+    <h2>数据列表</h2>
+        <%
+        String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+        String DB_URL = "jdbc:mysql://localhost:3306/blog?useSSL=false";
+        String USER = "root";
+        String PASS = "root";
+        Connection conn = null;
         Statement stmt = null;
-        try {
-            // 注册 JDBC 驱动
-            Class.forName(JDBC_DRIVER);
 
-            // 打开链接
+        String query = request.getParameter("username");
+
+        try {
+            Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
-            // 执行查询
             stmt = conn.createStatement();
             String sql;
             sql = "SELECT * FROM user";
+            if (query != null && query.length() > 0) {
+                sql = sql + " where user_name='" + query + "'";
+            }
             ResultSet rs = stmt.executeQuery(sql);
 
-            // 展开结果集数据库
             while (rs.next()) {
-                // 通过字段检索
                 int userId = rs.getInt("user_id");
                 String username = rs.getString("user_name");
                 String password = rs.getString("password");
-                // 输出数据
         %>
-    <form action="update.jsp" method="post">
-        <input type="hidden" name="userId" value="<%=userId%>"/>
-        <p>username: <input type="text" name="username" value="<%=username%>"/></p>
-        <p>password: <input type="text" name="password" value="<%=password%>"/></p>
-        <input type="submit" value="update" />
-    </form>
-    <form action="remove.jsp" method="post">
-        <input type="hidden" name="userId" value="<%=userId%>"/>
-        <input type="submit" value="delete" />
-    </form>
+        <form action="update.jsp" method="post">
+            <input type="hidden" name="userId" value="<%=userId%>" />
+            <p>username: <input type="text" name="username" value="<%=username%>" /></p>
+            <p>password: <input type="text" name="password" value="<%=password%>" /></p>
+            <input type="submit" value="update" />
+        </form>
+        <form action="remove.jsp" method="post">
+            <input type="hidden" name="userId" value="<%=userId%>" />
+            <input type="submit" value="delete" />
+        </form>
         <%
             }
-            // 完成后关闭
             rs.close();
             stmt.close();
             conn.close();
@@ -74,8 +71,19 @@
             }
         }
 %>
-    </h2>
+    <hr>
+    <h2>用户名搜索</h2>
+    <form action="index.jsp" method="get">
+        <p>username: <input type="text" name="username" /></p>
+        <input type="submit" value="search" />
+    </form>
+    <form action="index.jsp" method="get">
+        <input type="hidden" name="username" />
+        <input type="submit" value="refresh" />
+    </form>
 
+    <hr>
+    <h2>创建数据</h2>
     <form action="create.jsp" method="post">
         <p>username: <input type="text" name="username" /></p>
         <p>password: <input type="text" name="password" /></p>
