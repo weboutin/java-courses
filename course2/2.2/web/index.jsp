@@ -51,26 +51,24 @@
             stmt.close();
             conn.close();
         } catch (SQLException se) {
-            // 处理 JDBC 错误
             se.printStackTrace();
         } catch (Exception e) {
-            // 处理 Class.forName 错误
             e.printStackTrace();
         } finally {
-            // 关闭资源
             try {
                 if (stmt != null)
                     stmt.close();
             } catch (SQLException se2) {
-            } // 什么都不做
+                se2.printStackTrace();
+            }
             try {
                 if (conn != null)
                     conn.close();
             } catch (SQLException se) {
                 se.printStackTrace();
             }
-        }
-%>
+        }            
+        %>
     <hr>
     <h2>用户名搜索</h2>
     <form action="index.jsp" method="get">
