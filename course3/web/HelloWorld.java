@@ -8,24 +8,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.json.JSONObject;
+
 public class HelloWorld extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/json");
+        PrintWriter out = response.getWriter();
+        JSONObject jo = new JSONObject("{ \"abc\" : \"def\" }");
+
         try {
             Connection conn = new DBUtils().getConnection();
-            System.out.println(" 实例化Statement对象...");
             Statement stmt = conn.createStatement();
             String sql = "SELECT * FROM user";
             ResultSet rs = stmt.executeQuery(sql);
 
-            PrintWriter out = response.getWriter();
-            response.setContentType("text/html");
-
             while (rs.next()) {
                 int userId = rs.getInt("user_id");
                 String userName = rs.getString("user_name");
-                out.println("<h1>" + userName + "</h1>");
+                // out.println("<h1>" + userName + "</h1>");
             }
+            // out.println(jo);
+            out.println("{ \"adlakjfkl\" : \"def\" }");
         } catch (Exception e) {
 
         }
